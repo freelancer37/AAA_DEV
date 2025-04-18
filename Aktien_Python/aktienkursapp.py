@@ -85,4 +85,35 @@ if st.session_state.watchlist:
             aktie = yf.Ticker(ticker)
             info = aktie.info
             unternehmen = info.get('longName', ticker)
-            beschreibung = info.get('longBusinessSummary', 'Keine Beschreibung verfügbar
+            beschreibung = info.get('longBusinessSummary', 'Keine Beschreibung verfügbar.')
+            preis = info.get('currentPrice', '—')
+
+            st.markdown("---")
+            st.subheader(f"📌 {unternehmen} ({ticker.upper()}) — Aktueller Kurs: {preis} USD")
+
+            # 📈 Kursverlauf anzeigen
+            daten = aktie.history(period='1y')
+            angezeigte_daten = daten.loc[daten.index > '2024-01-01']
+
+            fig = go.Figure()
+            fig.add_trace(go.Scatter(x=angezeigte_daten.index, y=angezeigte_daten['Close'], name='Kurs'))
+            fig.update_layout(
+                title=f'{unternehmen} ({ticker.upper()})',
+                xaxis_title='Datum',
+                yaxis_title='Kurs in USD'
+            )
+            st.plotly_chart(fig, use_container_width=True)
+
+            # 🌍 Übersetzung mit deep_translator
+            beschreibung_de = GoogleTranslator(source='auto', target='de').translate(beschreibung)
+
+            # 📄 Unternehmensbeschreibung als aufklappbarer Text
+            with st.expander("📄 Unternehmensbeschreibung anzeigen"):
+                st.write(beschreibung_de)
+
+        except Exception as e:
+            st.error(f"⚠️ Fehler beim Abrufen der Daten für {ticker}.")
+            st.exception(e)
+
+else:
+    st.info("🔍 Fügen Sie Aktien zur Watchlist hinzu und klicken Sie auf eine Zeile, um Details anzuzeigen.")
