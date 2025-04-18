@@ -130,5 +130,6 @@ if st.session_state.watchlist:
             st.error(f"⚠️ Fehler beim Abrufen der Daten für {ticker}.")
             st.exception(e)
 
+
 else:
     st.info("🔍 Fügen Sie Aktien zur Watchlist hinzu, um sie hier anzuzeigen.")
