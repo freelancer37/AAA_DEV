@@ -31,11 +31,12 @@ if st.session_state.watchlist:
     st.subheader("📋 Ihre Watchlist:")
 
     # Tabellenähnliche Darstellung mit Gitternetzlinien
-    header_cols = st.columns([2, 4, 5, 2])  # View | Ticker | Name | Kurs
+    header_cols = st.columns([1, 3, 4, 3, 1])  # View | Ticker | Name | Kurs | Remove
     header_cols[0].markdown("**Aktion**")
     header_cols[1].markdown("**TickerSymbol**")
     header_cols[2].markdown("**Aktienname**")
     header_cols[3].markdown("**Aktueller Kurs**")
+    header_cols[4].markdown("**Entfernen**")
 
     # Tabelle ohne Buttons, stattdessen Links (klickbare Texte)
     for ticker in st.session_state.watchlist:
@@ -45,7 +46,7 @@ if st.session_state.watchlist:
             unternehmen = info.get("longName", "Unbekannt")
             preis = info.get("currentPrice", "—")
 
-            row = st.columns([2, 4, 5, 2])
+            row = st.columns([1, 3, 4, 3, 1])
 
             # Klickbare Textlinks (keine Buttons)
             with row[0]:
@@ -60,6 +61,12 @@ if st.session_state.watchlist:
 
             with row[3]:
                 st.write(f"{preis} USD")
+
+            # Lösch-Button am Ende der Zeile
+            with row[4]:
+                if st.button(f"🗑️", key=f"remove_{ticker}"):
+                    st.session_state.watchlist.remove(ticker)
+                    st.experimental_rerun()  # Seite neu laden nach dem Entfernen der Aktie
 
         except Exception as e:
             st.error(f"⚠️ Fehler bei {ticker}")
