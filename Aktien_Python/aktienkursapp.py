@@ -57,6 +57,14 @@ def delete_invalid_ticker(ticker):
     conn.commit()
     conn.close()
 
+def clear_watchlist():
+    """ Löscht alle Ticker in der Watchlist """
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM watchlist;")
+    conn.commit()
+    conn.close()
+
 # 🌐 Seite und Eingabe für Ticker
 create_watchlist_table()
 
@@ -69,6 +77,14 @@ if st.button("➕ Zur Watchlist hinzufügen"):
         st.success(f"'{ticker_input}' wurde zur Watchlist hinzugefügt!")
 
 # 📋 Anzeige der Watchlist
+st.markdown("---")
+
+# Hinzufügen des Buttons zum Löschen der Watchlist oben rechts
+if st.button("🗑️ Watchlist löschen", key="clear_watchlist"):
+    clear_watchlist()
+    st.success("Die gesamte Watchlist wurde gelöscht!")
+    st.experimental_rerun()  # Seite neu laden nach dem Löschen
+
 watchlist = get_watchlist()
 
 if watchlist:
@@ -155,3 +171,4 @@ if "selected_ticker" in st.session_state:
     except Exception as e:
         st.error(f"⚠️ Fehler beim Abrufen der Daten für {ticker}.")
         st.exception(e)
+
