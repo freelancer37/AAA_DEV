@@ -1,3 +1,4 @@
+
 import streamlit as st
 import yfinance as yf
 import plotly.graph_objects as go
@@ -69,4 +70,29 @@ if st.session_state.watchlist:
 
             st.subheader(f"{unternehmen} ({ticker_selected.upper()}) — Aktueller Kurs: {preis} USD")
 
-            # 📊 Kursverlauf (Plotly-Grafik
+            # 📊 Kursverlauf (Plotly-Grafik)
+            daten = aktie.history(period='1y')
+            angezeigte_daten = daten.loc[daten.index > '2024-01-01']
+
+            fig = go.Figure()
+            fig.add_trace(go.Scatter(x=angezeigte_daten.index, y=angezeigte_daten['Close'], name='Kurs'))
+            fig.update_layout(
+                title=f'{unternehmen} ({ticker_selected.upper()})',
+                xaxis_title='Datum',
+                yaxis_title='Kurs in USD'
+            )
+            st.plotly_chart(fig, use_container_width=True)
+
+            # 🌍 Übersetzung mit deep_translator
+            beschreibung_de = GoogleTranslator(source='auto', target='de').translate(beschreibung)
+
+            # 📄 Unternehmensbeschreibung als aufklappbarer Text
+            with st.expander("📄 Unternehmensbeschreibung anzeigen"):
+                st.write(beschreibung_de)
+
+        except Exception as e:
+            st.error(f"⚠️ Fehler beim Abrufen der Daten für {ticker_selected}.")
+            st.exception(e)
+
+else:
+    st.info("🔍 Fügen Sie Aktien zur Watchlist hinzu und klicken Sie auf eine Aktie, um die Details anzuzeigen.")
