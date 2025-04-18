@@ -6,7 +6,7 @@ from deep_translator import GoogleTranslator
 st.title('Aktienkurs Abfrage')
 
 #Eingabe Aktienticker
-ticker = st.text_input('Geben Sie das Ticker Symbol ein: (z.b. TSLA für Tesla)')
+ticker = st.text_input('Geben Sie das Ticker Symbol ein: (z.b. TSLA für Tesla, AAPL für Applt, VOW3.de für VW)')
 
 #Button Suche 
 if st.button('Suche starten'):
