@@ -69,6 +69,11 @@ if watchlist:
         try:
             aktie = yf.Ticker(ticker)
             info = aktie.info
+            
+            if info is None:
+                st.error(f"⚠️ Keine Daten verfügbar für {ticker}. Bitte überprüfen Sie das Ticker-Symbol.")
+                continue
+
             unternehmen = info.get("longName", "Unbekannt")
             preis = info.get("currentPrice", "—")
             
@@ -109,31 +114,36 @@ if "selected_ticker" in st.session_state:
         # Daten von der API
         aktie = yf.Ticker(ticker)
         info = aktie.info
-        unternehmen = info.get("longName", ticker)
-        beschreibung = info.get("longBusinessSummary", "Keine Beschreibung verfügbar.")
-        preis = info.get("currentPrice", "—")
+        
+        if info is None:
+            st.error(f"⚠️ Keine Daten verfügbar für {ticker}. Bitte überprüfen Sie das Ticker-Symbol.")
+        else:
+            unternehmen = info.get("longName", ticker)
+            beschreibung = info.get("longBusinessSummary", "Keine Beschreibung verfügbar.")
+            preis = info.get("currentPrice", "—")
 
-        st.markdown("---")
-        st.subheader(f"📌 {unternehmen} ({ticker.upper()}) — Aktueller Kurs: {preis} USD")
+            st.markdown("---")
+            st.subheader(f"📌 {unternehmen} ({ticker.upper()}) — Aktueller Kurs: {preis} USD")
 
-        # Kursgrafik für die letzte Jahr
-        daten = aktie.history(period='1y')
-        angezeigte_daten = daten.loc[daten.index > '2024-01-01']
+            # Kursgrafik für das letzte Jahr
+            daten = aktie.history(period='1y')
+            angezeigte_daten = daten.loc[daten.index > '2024-01-01']
 
-        fig = go.Figure()
-        fig.add_trace(go.Scatter(x=angezeigte_daten.index, y=angezeigte_daten['Close'], name='Kurs'))
-        fig.update_layout(
-            title=f'{unternehmen} ({ticker.upper()})',
-            xaxis_title='Datum',
-            yaxis_title='Kurs in USD'
-        )
-        st.plotly_chart(fig, use_container_width=True)
+            fig = go.Figure()
+            fig.add_trace(go.Scatter(x=angezeigte_daten.index, y=angezeigte_daten['Close'], name='Kurs'))
+            fig.update_layout(
+                title=f'{unternehmen} ({ticker.upper()})',
+                xaxis_title='Datum',
+                yaxis_title='Kurs in USD'
+            )
+            st.plotly_chart(fig, use_container_width=True)
 
-        # Unternehmensbeschreibung übersetzen
-        beschreibung_de = GoogleTranslator(source='auto', target='de').translate(beschreibung)
-        with st.expander("📄 Unternehmensbeschreibung anzeigen"):
-            st.write(beschreibung_de)
+            # Unternehmensbeschreibung übersetzen
+            beschreibung_de = GoogleTranslator(source='auto', target='de').translate(beschreibung)
+            with st.expander("📄 Unternehmensbeschreibung anzeigen"):
+                st.write(beschreibung_de)
 
     except Exception as e:
         st.error(f"⚠️ Fehler beim Abrufen der Daten für {ticker}.")
         st.exception(e)
+
