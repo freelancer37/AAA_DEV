@@ -63,15 +63,24 @@ if st.button('🔎 Suche starten') and ticker:
 
         st.subheader(f"{unternehmen} ({ticker.upper()}) — Aktueller Kurs: {preis} USD")
 
-        # 📊 Kursverlauf mit passendem Plotly-Theme
+        # 📊 Kursverlauf mit passendem Plotly-Theme (im Dunkelmodus)
         daten = aktie.history(period='1y')
         angezeigte_daten = daten.loc[daten.index > '2024-01-01']
 
-        fig = go.Figure(layout=dict(template='plotly_dark' if st.session_state.theme_mode == 'Dunkel' else 'plotly'))
+        # Plotly-Dunkelmodus anwenden
+        fig = go.Figure(layout=dict(
+            template='plotly_dark' if st.session_state.theme_mode == 'Dunkel' else 'plotly',
+            plot_bgcolor='rgb(10,10,10)',  # Hintergrundfarbe für den Chart
+            paper_bgcolor='rgb(10,10,10)',  # Hintergrundfarbe außerhalb des Charts
+            font=dict(color='white')  # Textfarbe der Achsen und Titel
+        ))
+
         fig.add_trace(go.Scatter(x=angezeigte_daten.index, y=angezeigte_daten['Close'], name='Kurs'))
-        fig.update_layout(title=f'{unternehmen} ({ticker.upper()})', 
-                          xaxis_title='Datum', 
-                          yaxis_title='Kurs in USD')
+        fig.update_layout(
+            title=f'{unternehmen} ({ticker.upper()})',
+            xaxis_title='Datum',
+            yaxis_title='Kurs in USD'
+        )
         st.plotly_chart(fig, use_container_width=True)
 
         # 🌍 Übersetzung mit deep_translator
@@ -84,3 +93,4 @@ if st.button('🔎 Suche starten') and ticker:
     except Exception as e:
         st.error("⚠️ Leider konnten die Daten nicht abgerufen werden. Bitte überprüfe das Ticker-Symbol.")
         st.exception(e)
+
