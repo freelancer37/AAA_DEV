@@ -112,4 +112,9 @@ if st.session_state.watchlist:
             with st.expander("📄 Unternehmensbeschreibung anzeigen"):
                 st.write(beschreibung_de)
 
-        except
+        except Exception as e:
+            st.error(f"⚠️ Fehler beim Abrufen der Daten für {ticker}.")
+            st.exception(e)
+
+else:
+    st.info("🔍 Fügen Sie Aktien zur Watchlist hinzu, um sie hier anzuzeigen.")
