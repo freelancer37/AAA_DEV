@@ -1,7 +1,6 @@
 import streamlit as st
 import yfinance as yf
 import plotly.graph_objects as go
-import pandas as pd
 from deep_translator import GoogleTranslator
 
 # 🌐 Seitenlayout & Titel
@@ -50,16 +49,14 @@ if st.session_state.watchlist:
 
             # Klickbare Textlinks (keine Buttons)
             with row[0]:
-                if st.markdown(f'<a href="javascript:void(0);" onclick="window.location.reload()">View</a>', unsafe_allow_html=True):
+                if st.button(f"View {ticker.upper()}", key=f"view_{ticker}"):
                     st.session_state.selected_ticker = ticker
 
             with row[1]:
-                if st.markdown(f'<a href="javascript:void(0);" onclick="window.location.reload()">{ticker.upper()}</a>', unsafe_allow_html=True):
-                    st.session_state.selected_ticker = ticker
+                st.write(ticker.upper())
 
             with row[2]:
-                if st.markdown(f'<a href="javascript:void(0);" onclick="window.location.reload()">{unternehmen}</a>', unsafe_allow_html=True):
-                    st.session_state.selected_ticker = ticker
+                st.write(unternehmen)
 
             with row[3]:
                 st.write(f"{preis} USD")
@@ -68,7 +65,7 @@ if st.session_state.watchlist:
             st.error(f"⚠️ Fehler bei {ticker}")
             st.exception(e)
 
-    # CSS für Table-Gitternetzlinien und Links ohne Button-Stil
+    # CSS für Table-Gitternetzlinien
     st.markdown("""
         <style>
         /* Tabelle mit Gitternetzlinien */
@@ -80,18 +77,6 @@ if st.session_state.watchlist:
             border: 1px solid #ccc;
             padding: 0.5rem;
             text-align: left;
-        }
-        
-        /* Link ohne Button-Stil */
-        a {
-            color: #0073e6;
-            text-decoration: none;
-            font-weight: normal;
-        }
-
-        a:hover {
-            color: #0056b3;
-            text-decoration: underline;
         }
         </style>
     """, unsafe_allow_html=True)
@@ -129,7 +114,6 @@ if st.session_state.watchlist:
         except Exception as e:
             st.error(f"⚠️ Fehler beim Abrufen der Daten für {ticker}.")
             st.exception(e)
-
 
 else:
     st.info("🔍 Fügen Sie Aktien zur Watchlist hinzu, um sie hier anzuzeigen.")
