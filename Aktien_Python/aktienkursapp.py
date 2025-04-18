@@ -27,17 +27,18 @@ if st.button("➕ Zur Watchlist hinzufügen"):
     elif ticker_input in st.session_state.watchlist:
         st.warning(f"'{ticker_input}' ist bereits in der Watchlist.")
 
-# 📋 Tabelle anzeigen
+# 📋 Tabelle anzeigen mit Gitternetzlinien und interaktivem Text
 if st.session_state.watchlist:
     st.subheader("📋 Ihre Watchlist:")
 
-    # Tabellenähnliche Darstellung mit klickbaren Elementen
+    # Tabellenähnliche Darstellung mit Gitternetzlinien
     header_cols = st.columns([2, 4, 5, 2])  # View | Ticker | Name | Kurs
     header_cols[0].markdown("**Aktion**")
     header_cols[1].markdown("**TickerSymbol**")
     header_cols[2].markdown("**Aktienname**")
     header_cols[3].markdown("**Aktueller Kurs**")
 
+    # Tabelle ohne Buttons, stattdessen Links (klickbare Texte)
     for ticker in st.session_state.watchlist:
         try:
             aktie = yf.Ticker(ticker)
@@ -47,17 +48,17 @@ if st.session_state.watchlist:
 
             row = st.columns([2, 4, 5, 2])
 
-            # Leicht grauer View-Button
+            # Klickbare Textlinks (keine Buttons)
             with row[0]:
-                if st.button("View", key=f"view_{ticker}"):
+                if st.markdown(f'<a href="javascript:void(0);" onclick="window.location.reload()">View</a>', unsafe_allow_html=True):
                     st.session_state.selected_ticker = ticker
 
             with row[1]:
-                if st.button(ticker.upper(), key=f"symbol_{ticker}"):
+                if st.markdown(f'<a href="javascript:void(0);" onclick="window.location.reload()">{ticker.upper()}</a>', unsafe_allow_html=True):
                     st.session_state.selected_ticker = ticker
 
             with row[2]:
-                if st.button(unternehmen, key=f"name_{ticker}"):
+                if st.markdown(f'<a href="javascript:void(0);" onclick="window.location.reload()">{unternehmen}</a>', unsafe_allow_html=True):
                     st.session_state.selected_ticker = ticker
 
             with row[3]:
@@ -67,17 +68,30 @@ if st.session_state.watchlist:
             st.error(f"⚠️ Fehler bei {ticker}")
             st.exception(e)
 
-    # CSS für hellgrauen Button (nur "View")
+    # CSS für Table-Gitternetzlinien und Links ohne Button-Stil
     st.markdown("""
         <style>
-        div.stButton > button {
-            background-color: #f0f0f0;
-            color: black;
+        /* Tabelle mit Gitternetzlinien */
+        .stDataFrame {
             border: 1px solid #ccc;
-            padding: 0.25rem 0.5rem;
+            border-collapse: collapse;
         }
-        div.stButton > button:hover {
-            background-color: #e0e0e0;
+        .stDataFrame th, .stDataFrame td {
+            border: 1px solid #ccc;
+            padding: 0.5rem;
+            text-align: left;
+        }
+        
+        /* Link ohne Button-Stil */
+        a {
+            color: #0073e6;
+            text-decoration: none;
+            font-weight: normal;
+        }
+
+        a:hover {
+            color: #0056b3;
+            text-decoration: underline;
         }
         </style>
     """, unsafe_allow_html=True)
