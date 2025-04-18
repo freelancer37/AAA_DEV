@@ -48,9 +48,9 @@ if st.session_state.watchlist:
 
             row = st.columns([1, 3, 4, 3, 1])
 
-            # Klickbare Textlinks (keine Buttons)
+            # Klickbares Auge-Symbol für "View" (keine Buttons)
             with row[0]:
-                if st.button(f"View {ticker.upper()}", key=f"view_{ticker}"):
+                if st.button(f"👁️", key=f"view_{ticker}"):
                     st.session_state.selected_ticker = ticker
 
             with row[1]:
@@ -62,11 +62,11 @@ if st.session_state.watchlist:
             with row[3]:
                 st.write(f"{preis} USD")
 
-            # Lösch-Button am Ende der Zeile
+            # Lösch-Button (Papierkorb-Symbol) am Ende der Zeile
             with row[4]:
                 if st.button(f"🗑️", key=f"remove_{ticker}"):
                     st.session_state.watchlist.remove(ticker)
-                    st.experimental_rerun()  # Seite neu laden nach dem Entfernen der Aktie
+                    st.rerun()  # Seite neu laden nach dem Entfernen der Aktie
 
         except Exception as e:
             st.error(f"⚠️ Fehler bei {ticker}")
