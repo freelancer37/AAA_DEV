@@ -73,6 +73,5 @@ if st.button('🔎 Suche starten') and ticker:
             st.write(beschreibung_de)
 
     except Exception as e:
-        st.error("
-
-
+        st.error("⚠️ Leider konnten die Daten nicht abgerufen werden. Bitte überprüfe das Ticker-Symbol.")
+        st.exception(e)
